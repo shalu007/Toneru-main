@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Montserrat-Regular.ttf">
+            <string>Montserrat-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MyAlbumViewController" customModule="Tonneru" customModuleProvider="target">
+            <connections>
+                <outlet property="btnCreateAlbumSongBottomLayout" destination="zuV-dY-kQz" id="73O-sV-OG5"/>
+                <outlet property="createAlbum" destination="xjW-gZ-2p7" id="vGy-u4-Utc"/>
+                <outlet property="tblAlbums" destination="3Pn-mL-IOg" id="xSg-It-9vN"/>
+                <outlet property="view" destination="iN0-l3-epB" id="lU8-rH-I7o"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" restorationIdentifier="MyAlbumViewController" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="home-bg" translatesAutoresizingMaskIntoConstraints="NO" id="QZ5-zu-EFG">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                </imageView>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3Pn-mL-IOg">
+                    <rect key="frame" x="0.0" y="49" width="414" height="758"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </tableView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xjW-gZ-2p7">
+                    <rect key="frame" x="16" y="812" width="382" height="50"/>
+                    <color key="backgroundColor" red="0.89411764709999997" green="0.72941176470000002" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="tL9-OY-sEZ"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="17"/>
+                    <state key="normal" title="Create Album">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                    <connections>
+                        <action selector="createAlbumAction:" destination="-1" eventType="touchUpInside" id="4dT-pM-oJ5"/>
+                    </connections>
+                </button>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="3Pn-mL-IOg" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="5" id="3Vi-di-7s3"/>
+                <constraint firstItem="3Pn-mL-IOg" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="COG-Bo-jvR"/>
+                <constraint firstAttribute="bottom" secondItem="QZ5-zu-EFG" secondAttribute="bottom" id="QQ2-jb-6yG"/>
+                <constraint firstItem="QZ5-zu-EFG" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="T2I-XK-kef"/>
+                <constraint firstItem="QZ5-zu-EFG" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="Uiz-7x-eUZ"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="3Pn-mL-IOg" secondAttribute="trailing" id="cRB-bH-iFg"/>
+                <constraint firstItem="xjW-gZ-2p7" firstAttribute="top" secondItem="3Pn-mL-IOg" secondAttribute="bottom" constant="5" id="gdb-YB-T9J"/>
+                <constraint firstItem="xjW-gZ-2p7" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="gq2-oH-VyB"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="xjW-gZ-2p7" secondAttribute="trailing" constant="16" id="hnB-g5-mPj"/>
+                <constraint firstItem="QZ5-zu-EFG" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="od2-LA-d56"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="xjW-gZ-2p7" secondAttribute="bottom" id="zuV-dY-kQz"/>
+            </constraints>
+            <point key="canvasLocation" x="31.884057971014496" y="71.651785714285708"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="home-bg" width="562.5" height="1218"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
