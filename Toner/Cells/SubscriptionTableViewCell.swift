@@ -25,7 +25,7 @@ class SubscriptionTableViewCell: UITableViewCell {
             durationLabel.text = "1"
             frequencyLabel.text = data.frequency.uppercased()
             originalPrice.text = ""
-            discountPrice.text = "$" + data.price
+//            discountPrice.text = "$" + data.price
             if data.package_no_of_songs != ""{
                 fromLabel.text = "Package Name:"
                 startDateTimeLabel.text = data.name

@@ -1,0 +1,100 @@
+{
+  "identifier" : "259EE251",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1",
+      "familyShareable" : false,
+      "internalID" : "9512EE10",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Song",
+          "displayName" : "Song",
+          "locale" : "en_GB"
+        }
+      ],
+      "productID" : "com.release.tonneru.songs",
+      "referenceName" : "Songs",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "E0C912B2",
+      "localizations" : [
+
+      ],
+      "name" : "AppSubscription",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "1.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "883FB4C4",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "1 Month",
+              "displayName" : "1 Month",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "com.release.tonneru.one.month",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "OneMonth",
+          "subscriptionGroupID" : "E0C912B2",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "23.88",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "0FC64CA2",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "1 Year",
+              "displayName" : "1 Year",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "com.release.tonneru.one.year",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "OneYear",
+          "subscriptionGroupID" : "E0C912B2",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 1
+  }
+}
