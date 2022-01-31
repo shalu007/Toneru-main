@@ -72,6 +72,7 @@ class SubscriptionViewController: UIViewController {
         
         IAPHander.shared.purchaseProductComplition = { [weak self]  (type, product, transaction) in
             guard let self = self else { return }
+            self.removeSpinner()
             if type == .purchased {
                 self.setMemberSubscription()
             }
@@ -287,9 +288,10 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 {
-            if self.model.count > 0 {
+            if self.model.count > 0 && NetworkReachabilityManager()!.isReachable {
                 if let purchaseProductComplition = IAPHander.shared.purchaseProductComplition   {
                     self.selectedPlan = planList[indexPath.row]
+                    self.showSpinner(onView: self.view)
                     IAPHander.shared.purchase(product: model[indexPath.row], complition: purchaseProductComplition)
                 }
             }
@@ -387,30 +389,31 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     func setMemberSubscription() {
-        self.activityIndicator.startAnimating()
-        let userId: String = UserDefaults.standard.fetchData(forKey: .userId)
-        let apiUrl = "https://tonnerumusic.com/api/v1/setmembersubscription"
-        let urlConvertible = URL(string: apiUrl)!
-        var param =  [String: Any]()
-        param["user_id"] = Int(userId) ?? 0
-        param["plan_id"] = Int(selectedPlan?.id ?? "0")
-        
-        
-        Alamofire.request(urlConvertible,method: .post,parameters: param).validate().responseJSON { (response) in
-            let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
-            print(resposeJSON)
-            if let _ = resposeJSON["status"] {
-                self.activityIndicator.stopAnimating()
-                if UserDefaults.standard.value(forKey: "userSubscribed") as! Int == 0 {
-                    UserDefaults.standard.setValue(1, forKey: "userSubscribed")
-                    UserDefaults.standard.synchronize()
-                    let destination = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! TabBarController
-                    self.appD.window?.rootViewController = destination
+        if NetworkReachabilityManager()!.isReachable {
+            let userId: String = UserDefaults.standard.fetchData(forKey: .userId)
+            let apiUrl = "https://tonnerumusic.com/api/v1/setmembersubscription"
+            let urlConvertible = URL(string: apiUrl)!
+            var param =  [String: Any]()
+            param["user_id"] = Int(userId) ?? 0
+            param["plan_id"] = Int(selectedPlan?.id ?? "0")
+            
+            
+            Alamofire.request(urlConvertible,method: .post,parameters: param).validate().responseJSON { (response) in
+                let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
+                print(resposeJSON)
+                if let _ = resposeJSON["status"] {
+                    self.activityIndicator.stopAnimating()
+                    if UserDefaults.standard.value(forKey: "userSubscribed") as! Int == 0 {
+                        UserDefaults.standard.setValue(1, forKey: "userSubscribed")
+                        UserDefaults.standard.synchronize()
+                        let destination = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! TabBarController
+                        self.appD.window?.rootViewController = destination
+                        
+                    } else {
+                        self.navigationController?.popViewController(animated: true)
+                    }
                     
-                } else {
-                    self.navigationController?.popViewController(animated: true)
                 }
-                
             }
         }
     }

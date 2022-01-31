@@ -151,10 +151,16 @@ extension IAPHander: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                 case .failed:
                     log("Product purchase failed")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    if let complition = self.purchaseProductComplition {
+                        complition(IAPHandlerAlertType.failed, self.productToPurchase, trans)
+                    }
                     break
                 case .restored:
                     log("Product restored")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    if let complition = self.purchaseProductComplition {
+                        complition(IAPHandlerAlertType.restored, self.productToPurchase, trans)
+                    }
                     break
                     
                 default: break
