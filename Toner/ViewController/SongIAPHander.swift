@@ -1,21 +1,21 @@
 //
-//  IAPHander.swift
+//  SongIAPHander.swift
 //  Toner
 //
-//  Created by Shalu Tyagi on 20/01/22.
+//  Created by Shalu Tyagi on 31/01/22.
 //  Copyright © 2022 Users. All rights reserved.
 //
 
+import Foundation
 
 import UIKit
 import StoreKit
 
-enum Product: String, CaseIterable {
-    case one_month_subscription = "com.release.tonneru.monthly"
-    case one_year_subscription = "com.release.tonneru.year"
+enum SongProduct: String, CaseIterable {
+    case song_subscription = "com.release.tonneru.songTest"
 }
 
-enum IAPHandlerAlertType {
+enum SongIAPHandlerAlertType {
     case setProductIds
     case disabled
     case restored
@@ -33,11 +33,11 @@ enum IAPHandlerAlertType {
     }
 }
 
-class IAPHander: NSObject {
+class SongIAPHander: NSObject {
     
     //MARK:- Shared Object
     //MARK:-
-    static let shared = IAPHander()
+    static let shared = SongIAPHander()
     private override init() { }
     
     //MARK:- Properties
@@ -47,7 +47,7 @@ class IAPHander: NSObject {
     fileprivate var productsRequest = SKProductsRequest()
     fileprivate var productToPurchase: SKProduct?
     
-    var purchaseProductComplition: ((IAPHandlerAlertType, SKProduct?, SKPaymentTransaction?)->Void)?
+    var purchaseProductComplition: ((SongIAPHandlerAlertType, SKProduct?, SKPaymentTransaction?)->Void)?
     var fetchProductComplition: (([SKProduct])->Void)?
     
     //MARK:- Public
@@ -58,13 +58,13 @@ class IAPHander: NSObject {
     
     //Set Product Ids
     func setProductIds() {
-        self.productIds = Product.allCases.compactMap({ $0 .rawValue })
+        self.productIds = SongProduct.allCases.compactMap({ $0 .rawValue })
     }
     
     //MAKE PURCHASE OF A PRODUCT
     func canMakePurchases() -> Bool {  return SKPaymentQueue.canMakePayments()  }
     
-    func purchase(product: SKProduct, complition: @escaping ((IAPHandlerAlertType, SKProduct?, SKPaymentTransaction?)->Void)) {
+    func purchase(product: SKProduct, complition: @escaping ((SongIAPHandlerAlertType, SKProduct?, SKPaymentTransaction?)->Void)) {
         
         self.purchaseProductComplition = complition
         self.productToPurchase = product
@@ -78,7 +78,7 @@ class IAPHander: NSObject {
             productID = product.productIdentifier
         }
         else {
-            complition(IAPHandlerAlertType.disabled, nil, nil)
+            complition(SongIAPHandlerAlertType.disabled, nil, nil)
         }
     }
     
@@ -117,7 +117,7 @@ class IAPHander: NSObject {
 
 //MARK:- Product Request Delegate and Payment Transaction Methods
 //MARK:-
-extension IAPHander: SKProductsRequestDelegate, SKPaymentTransactionObserver {
+extension SongIAPHander: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     
     // REQUEST IAP PRODUCTS
     func productsRequest (_ request:SKProductsRequest, didReceive response:SKProductsResponse) {
@@ -131,7 +131,7 @@ extension IAPHander: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     
     func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
         if let complition = self.purchaseProductComplition {
-            complition(IAPHandlerAlertType.restored, nil, nil)
+            complition(SongIAPHandlerAlertType.restored, nil, nil)
         }
     }
     
@@ -144,7 +144,7 @@ extension IAPHander: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                     log("Product purchase done")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                     if let complition = self.purchaseProductComplition {
-                        complition(IAPHandlerAlertType.purchased, self.productToPurchase, trans)
+                        complition(SongIAPHandlerAlertType.purchased, self.productToPurchase, trans)
                     }
                     break
                     
@@ -162,11 +162,3 @@ extension IAPHander: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     }
 }
 
-extension SKProduct {
-    var localizedPrice: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = priceLocale
-        return formatter.string(from: price)!
-    }
-}

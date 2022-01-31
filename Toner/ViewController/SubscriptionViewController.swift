@@ -29,6 +29,7 @@ class SubscriptionViewController: UIViewController {
     var isFromSub = false
     
     var vSpinner : UIView?
+    var selectedPlan: SubscriptionPlanModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,13 +65,15 @@ class SubscriptionViewController: UIViewController {
         IAPHander.shared.fetchProductComplition = { [weak self]  product in
             guard let self = self else { return }
             self.model = product
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
         
         IAPHander.shared.purchaseProductComplition = { [weak self]  (type, product, transaction) in
             guard let self = self else { return }
-            self.removeSpinner()
             if type == .purchased {
-                self.markMembership()
+                self.setMemberSubscription()
             }
         }
         
@@ -79,18 +82,18 @@ class SubscriptionViewController: UIViewController {
         }
         
         
-//        getArtisPlantList()
+        //        getArtisPlantList()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         if UserDefaults.standard.fetchData(forKey: .userGroupID) == "4"{
             getPlanList(playFor: "memberplan")
             isMember = true
-
+            
         }else{
             getPlanList(playFor: "aristplan")
             isMember = false
-
+            
         }
         
         if (TonneruMusicPlayer.shared.isMiniViewActive){
@@ -98,7 +101,7 @@ class SubscriptionViewController: UIViewController {
         }else{
             self.tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNonzeroMagnitude))
         }
-
+        
         myplans()
     }
     fileprivate func getPlanList(playFor:String){
@@ -119,7 +122,7 @@ class SubscriptionViewController: UIViewController {
                 
                 let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
                 self.activityIndicator.stopAnimating()
-            
+                
                 if(resposeJSON["status"] as? Bool ?? false){
                     let allPlans = resposeJSON["plans"] as? NSArray ?? NSArray()
                     print(allPlans)
@@ -139,7 +142,7 @@ class SubscriptionViewController: UIViewController {
                     }
                 }
                 self.tableView.reloadData()
-        }
+            }
     }
     
     fileprivate func myplans(){
@@ -151,7 +154,7 @@ class SubscriptionViewController: UIViewController {
                           method: .post,
                           parameters: [
                             "user_id": UserDefaults.standard.fetchData(forKey: .userId)
-            ] as [String: String])
+                          ] as [String: String])
             .validate().responseJSON { (response) in
                 
                 guard response.result.isSuccess else {
@@ -163,7 +166,7 @@ class SubscriptionViewController: UIViewController {
                 let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
                 print(resposeJSON)
                 self.activityIndicator.stopAnimating()
-            
+                
                 if(resposeJSON["status"] as? Bool ?? false){
                     let allPlans = resposeJSON["subscriptions"] as? NSArray ?? NSArray()
                     if self.isMember {
@@ -216,18 +219,10 @@ class SubscriptionViewController: UIViewController {
                             self.myPlanList.append(currentPlanData)
                         }
                     }
-        
+                    
                 }
                 self.tableView.reloadData()
-        }
-    }
-    
-    func markMembership() {
-        if UserDefaults.standard.fetchData(forKey: .userGroupID) == "3" {
-            self.getMembershipForArtist()
-        }else{
-            self.getMembership()
-        }
+            }
     }
 }
 
@@ -264,7 +259,7 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
             cell.backView.clipsToBounds = true
             cell.data = planList[indexPath.row]
             
-            if planList[indexPath.row].id == "6" { //monthly
+            if planList[indexPath.row].name == "Monthly" ||  planList[indexPath.row].name == "Monthly Subscription"  {
                 for index in model {
                     if index.localizedTitle == "1 Month" {
                         cell.discountPrice.text =  index.localizedPrice
@@ -272,7 +267,7 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
                 }
             }
             
-            if planList[indexPath.row].id == "1" { //Yearly
+            if planList[indexPath.row].name == "Yearly" || planList[indexPath.row].name == "Yearly Subscription" {
                 for index in model {
                     if index.localizedTitle == "1 Year" {
                         cell.discountPrice.text = index.localizedPrice
@@ -291,15 +286,16 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //
         if indexPath.section == 1 {
-            
-            if let purchaseProductComplition = IAPHander.shared.purchaseProductComplition {
-                self.showSpinner(onView: self.view)
-                IAPHander.shared.purchase(product: model[indexPath.row], complition: purchaseProductComplition)
+            if self.model.count > 0 {
+                if let purchaseProductComplition = IAPHander.shared.purchaseProductComplition   {
+                    self.selectedPlan = planList[indexPath.row]
+                    IAPHander.shared.purchase(product: model[indexPath.row], complition: purchaseProductComplition)
+                }
             }
         }
     }
+    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0{
             if isMember {
@@ -390,27 +386,32 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
         }
     }
     
-    func getMembership() {
-        if UserDefaults.standard.value(forKey: "userSubscribed") as! Int == 0 {
-            UserDefaults.standard.setValue(1, forKey: "userSubscribed")
-            UserDefaults.standard.synchronize()
-            let destination = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! TabBarController
-            self.appD.window?.rootViewController = destination
-        } else {
-            self.navigationController?.popViewController(animated: true)
-        }
-    }
-
-    
-    func getMembershipForArtist() {
-        if UserDefaults.standard.value(forKey: "userSubscribed") as! Int == 0 {
-            UserDefaults.standard.setValue(1, forKey: "userSubscribed")
-            UserDefaults.standard.synchronize()
-            let destination = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! TabBarController
-            self.appD.window?.rootViewController = destination
-            
-        } else {
-            self.navigationController?.popViewController(animated: true)
+    func setMemberSubscription() {
+        self.activityIndicator.startAnimating()
+        let userId: String = UserDefaults.standard.fetchData(forKey: .userId)
+        let apiUrl = "https://tonnerumusic.com/api/v1/setmembersubscription"
+        let urlConvertible = URL(string: apiUrl)!
+        var param =  [String: Any]()
+        param["user_id"] = Int(userId) ?? 0
+        param["plan_id"] = Int(selectedPlan?.id ?? "0")
+        
+        
+        Alamofire.request(urlConvertible,method: .post,parameters: param).validate().responseJSON { (response) in
+            let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
+            print(resposeJSON)
+            if let _ = resposeJSON["status"] {
+                self.activityIndicator.stopAnimating()
+                if UserDefaults.standard.value(forKey: "userSubscribed") as! Int == 0 {
+                    UserDefaults.standard.setValue(1, forKey: "userSubscribed")
+                    UserDefaults.standard.synchronize()
+                    let destination = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! TabBarController
+                    self.appD.window?.rootViewController = destination
+                    
+                } else {
+                    self.navigationController?.popViewController(animated: true)
+                }
+                
+            }
         }
     }
 }
