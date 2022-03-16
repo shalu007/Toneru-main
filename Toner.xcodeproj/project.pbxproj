@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0473774F7E338C8B4F8EB426 /* Pods_Toner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 455A0D81617918872AC61DDC /* Pods_Toner.framework */; };
+		11269A9D279A988A00EB5E7F /* IAPHander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11269A9C279A988A00EB5E7F /* IAPHander.swift */; };
+		11269A9F279BD8B500EB5E7F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11269A9E279BD8B500EB5E7F /* StoreKit.framework */; };
+		11BD557727A7D3AF00614C6D /* SongIAPHander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BD557627A7D3AF00614C6D /* SongIAPHander.swift */; };
 		CE0F43B2254DA77D0001B85E /* MyDownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0F43B0254DA77D0001B85E /* MyDownloadViewController.swift */; };
 		CE0F43B3254DA77D0001B85E /* MyDownloadViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CE0F43B1254DA77D0001B85E /* MyDownloadViewController.xib */; };
 		CE0F43B6254DAF9D0001B85E /* DownloadTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0F43B4254DAF9D0001B85E /* DownloadTableViewCell.swift */; };
@@ -172,6 +175,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		11269A9C279A988A00EB5E7F /* IAPHander.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHander.swift; sourceTree = "<group>"; };
+		11269A9E279BD8B500EB5E7F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		11BD557627A7D3AF00614C6D /* SongIAPHander.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongIAPHander.swift; sourceTree = "<group>"; };
 		143DAD559B395B6E8C1527B2 /* Pods-Toner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Toner.release.xcconfig"; path = "Target Support Files/Pods-Toner/Pods-Toner.release.xcconfig"; sourceTree = "<group>"; };
 		3CAFBF887004EB6B4D31B6A5 /* Pods-Toner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Toner.debug.xcconfig"; path = "Target Support Files/Pods-Toner/Pods-Toner.debug.xcconfig"; sourceTree = "<group>"; };
 		455A0D81617918872AC61DDC /* Pods_Toner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Toner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -366,6 +372,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0473774F7E338C8B4F8EB426 /* Pods_Toner.framework in Frameworks */,
+				11269A9F279BD8B500EB5E7F /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -603,6 +610,7 @@
 		EF56F9F62377181800F1A965 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				11269A9E279BD8B500EB5E7F /* StoreKit.framework */,
 				E364CCE0268AF726000DBAE5 /* WKWebViewRTC.framework */,
 				EF56F9F72377181900F1A965 /* AVFoundation.framework */,
 				455A0D81617918872AC61DDC /* Pods_Toner.framework */,
@@ -613,6 +621,7 @@
 		EF6CFE1F237487E20004B469 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				11269A9C279A988A00EB5E7F /* IAPHander.swift */,
 				E3789525266E3764003FD1CC /* SupportAndHelpViewController.swift */,
 				E3C925AD2618A308003EF12B /* MySongViewController.swift */,
 				E39FDA58260E5F150095EDEE /* AcountOverviewViewController.swift */,
@@ -647,6 +656,7 @@
 				E323D30A2631F6F4002CC98A /* ConfirmSubscriptionViewController.swift */,
 				E38747442636D88F00833316 /* UploadSongViewController.swift */,
 				E367AC2526542DE50020B0F8 /* ChatViewController.swift */,
+				11BD557627A7D3AF00614C6D /* SongIAPHander.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -916,6 +926,7 @@
 				CE0F43B6254DAF9D0001B85E /* DownloadTableViewCell.swift in Sources */,
 				CE4B5812251F1A7500C7FDAE /* EditProfileViewController.swift in Sources */,
 				E323D30B2631F6F4002CC98A /* ConfirmSubscriptionViewController.swift in Sources */,
+				11269A9D279A988A00EB5E7F /* IAPHander.swift in Sources */,
 				CE99462F24F0E0F8000A532E /* SubscriptionViewController.swift in Sources */,
 				EF6CFE21237488250004B469 /* TabBarController.swift in Sources */,
 				CEB088B224BF440B00C2EBEA /* ExpandableLabel.swift in Sources */,
@@ -927,6 +938,7 @@
 				EF10591D2440416100406A2B /* TopSalesTableViewCell.swift in Sources */,
 				CEE846D8250CA7B8007E938B /* PlayListTableViewCell.swift in Sources */,
 				E355C731261E2EE30002623D /* AlbumModel.swift in Sources */,
+				11BD557727A7D3AF00614C6D /* SongIAPHander.swift in Sources */,
 				EFA3A447237D048900FE3118 /* ArtistImageHeaderCell.swift in Sources */,
 				CE0F43B2254DA77D0001B85E /* MyDownloadViewController.swift in Sources */,
 				EF3B8C7423F4F86C000F323F /* TopArtistTableViewCell.swift in Sources */,
@@ -1162,7 +1174,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 28;
-				DEVELOPMENT_TEAM = Z4AHA8U42E;
+				DEVELOPMENT_TEAM = KRU83VZ8AX;
 				INFOPLIST_FILE = Toner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = (

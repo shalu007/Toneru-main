@@ -9,21 +9,28 @@
 import UIKit
 import NVActivityIndicatorView
 import Alamofire
+import StoreKit
+
 
 class SubscriptionViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var imgBG: UIImageView!
     @IBOutlet weak var btnBackOutlet: UIButton!
     @IBOutlet weak var viewHeaderHeightConstraint: NSLayoutConstraint!
-
+    
+    private var model = [SKProduct]()
+    
     var activityIndicator: NVActivityIndicatorView!
+    
     var planList = [SubscriptionPlanModel]()
     var myPlanList = [MyPlanModel]()
     var memberPlanList = [MemberPlanModel]()
     var isMember = false
     var isFromSub = false
     
-
+    var vSpinner : UIView?
+    var selectedPlan: SubscriptionPlanModel?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -54,19 +61,40 @@ class SubscriptionViewController: UIViewController {
         tableView.register(UINib.init(nibName: "MyPlanTableViewCell", bundle: nil), forCellReuseIdentifier: "MyPlanTableViewCell")
         tableView.dataSource = self
         tableView.delegate = self
-       
-//        getArtisPlantList()
+        
+        IAPHander.shared.fetchProductComplition = { [weak self]  product in
+            guard let self = self else { return }
+            self.model = product
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+        
+        IAPHander.shared.purchaseProductComplition = { [weak self]  (type, product, transaction) in
+            guard let self = self else { return }
+            self.removeSpinner()
+            if type == .purchased {
+                self.setMemberSubscription()
+            }
+        }
+        
+        if let fetchProductComplition = IAPHander.shared.fetchProductComplition {
+            IAPHander.shared.fetchAvailableProducts(complition: fetchProductComplition)
+        }
+        
+        
+        //        getArtisPlantList()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         if UserDefaults.standard.fetchData(forKey: .userGroupID) == "4"{
             getPlanList(playFor: "memberplan")
             isMember = true
-
+            
         }else{
             getPlanList(playFor: "aristplan")
             isMember = false
-
+            
         }
         
         if (TonneruMusicPlayer.shared.isMiniViewActive){
@@ -74,7 +102,7 @@ class SubscriptionViewController: UIViewController {
         }else{
             self.tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNonzeroMagnitude))
         }
-
+        
         myplans()
     }
     fileprivate func getPlanList(playFor:String){
@@ -95,7 +123,7 @@ class SubscriptionViewController: UIViewController {
                 
                 let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
                 self.activityIndicator.stopAnimating()
-            
+                
                 if(resposeJSON["status"] as? Bool ?? false){
                     let allPlans = resposeJSON["plans"] as? NSArray ?? NSArray()
                     print(allPlans)
@@ -115,7 +143,7 @@ class SubscriptionViewController: UIViewController {
                     }
                 }
                 self.tableView.reloadData()
-        }
+            }
     }
     
     fileprivate func myplans(){
@@ -127,7 +155,7 @@ class SubscriptionViewController: UIViewController {
                           method: .post,
                           parameters: [
                             "user_id": UserDefaults.standard.fetchData(forKey: .userId)
-            ] as [String: String])
+                          ] as [String: String])
             .validate().responseJSON { (response) in
                 
                 guard response.result.isSuccess else {
@@ -139,7 +167,7 @@ class SubscriptionViewController: UIViewController {
                 let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
                 print(resposeJSON)
                 self.activityIndicator.stopAnimating()
-            
+                
                 if(resposeJSON["status"] as? Bool ?? false){
                     let allPlans = resposeJSON["subscriptions"] as? NSArray ?? NSArray()
                     if self.isMember {
@@ -192,49 +220,10 @@ class SubscriptionViewController: UIViewController {
                             self.myPlanList.append(currentPlanData)
                         }
                     }
-        
+                    
                 }
                 self.tableView.reloadData()
-        }
-    }
-
-    fileprivate func getArtisPlantList(){
-        self.activityIndicator.startAnimating()
-        planList = [SubscriptionPlanModel]()
-        let reuestURL = "https://tonnerumusic.com/api/v1/artist_subscription"
-        let urlConvertible = URL(string: reuestURL)!
-        Alamofire.request(urlConvertible,
-                          method: .post,
-                          parameters: [
-                            "artist_id": UserDefaults.standard.fetchData(forKey: .userId)
-            ] as [String: String])
-            .validate().responseJSON { (response) in
-                
-                guard response.result.isSuccess else {
-                    self.tabBarController?.view.makeToast(message: Message.apiError)
-                    self.activityIndicator.stopAnimating()
-                    return
-                }
-                
-                let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
-                self.activityIndicator.stopAnimating()
-            
-                if(resposeJSON["status"] as? Bool ?? false){
-                    let allPlans = resposeJSON["subscriptions"] as? NSArray ?? NSArray()
-                    allPlans.forEach { (plan) in
-                        let currentPlan = plan as? NSDictionary ?? NSDictionary()
-                        var currentPlanData = SubscriptionPlanModel()
-                        currentPlanData.id = currentPlan["package_id"] as? String ?? ""
-                        currentPlanData.name = currentPlan["package_name"] as? String ?? ""
-                        currentPlanData.price = currentPlan["package_price"] as? String ?? ""
-                        currentPlanData.description = currentPlan["package_description"] as? String ?? ""
-                        currentPlanData.status = currentPlan["artist_package_status_id"] as? String ?? ""
-                        currentPlanData.package_no_of_songs = currentPlan["package_no_of_songs"] as? String ?? ""
-                        self.planList.append(currentPlanData)
-                    }
-                }
-                self.tableView.reloadData()
-        }
+            }
     }
 }
 
@@ -270,6 +259,22 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
             cell.backView.layer.cornerRadius = 5
             cell.backView.clipsToBounds = true
             cell.data = planList[indexPath.row]
+            
+            if planList[indexPath.row].name == "Monthly" ||  planList[indexPath.row].name == "Monthly Subscription"  {
+                for index in model {
+                    if index.localizedTitle == "1 Month" {
+                        cell.discountPrice.text =  index.localizedPrice
+                    }
+                }
+            }
+            
+            if planList[indexPath.row].name == "Yearly" || planList[indexPath.row].name == "Yearly Subscription" {
+                for index in model {
+                    if index.localizedTitle == "1 Year" {
+                        cell.discountPrice.text = index.localizedPrice
+                    }
+                }
+            }
             return cell
         }
     }
@@ -282,15 +287,17 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //
         if indexPath.section == 1 {
-        let destination = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ConfirmSubscriptionViewController") as! ConfirmSubscriptionViewController
-        let obj = planList[indexPath.row]
-        destination.plan_id = obj.id
-        destination.isFromCheckSub = isFromSub
-        self.navigationController?.pushViewController(destination, animated: true)
+            if self.model.count > 0 && NetworkReachabilityManager()!.isReachable {
+                if let purchaseProductComplition = IAPHander.shared.purchaseProductComplition   {
+                    self.selectedPlan = planList[indexPath.row]
+                    self.showSpinner(onView: self.view)
+                    IAPHander.shared.purchase(product: model[indexPath.row], complition: purchaseProductComplition)
+                }
+            }
         }
     }
+    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0{
             if isMember {
@@ -334,7 +341,6 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
             headerView.addSubview(label)
             return headerView
         }
-        
     }
     
     @IBAction func btnBackAction(_ sender: UIButton) {
@@ -357,5 +363,58 @@ extension SubscriptionViewController: UITableViewDataSource, UITableViewDelegate
         alertController.addAction(cancelAlertAction)
         
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func showSpinner(onView : UIView) {
+        let spinnerView = UIView.init(frame: onView.bounds)
+        spinnerView.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+        let ai = UIActivityIndicatorView.init(style: .whiteLarge)
+        ai.startAnimating()
+        ai.center = spinnerView.center
+        
+        DispatchQueue.main.async {
+            spinnerView.addSubview(ai)
+            onView.addSubview(spinnerView)
+        }
+        
+        vSpinner = spinnerView
+    }
+    
+    func removeSpinner() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.vSpinner?.removeFromSuperview()
+            self.vSpinner = nil
+        }
+    }
+    
+    func setMemberSubscription() {
+        if NetworkReachabilityManager()!.isReachable {
+            let userId: String = UserDefaults.standard.fetchData(forKey: .userId)
+            let apiUrl = "https://tonnerumusic.com/api/v1/setmembersubscription"
+            let urlConvertible = URL(string: apiUrl)!
+            var param =  [String: Any]()
+            param["user_id"] = Int(userId) ?? 0
+            param["plan_id"] = Int(selectedPlan?.id ?? "0")
+            
+            
+            Alamofire.request(urlConvertible,method: .post,parameters: param).validate().responseJSON { (response) in
+                let resposeJSON = response.value as? NSDictionary ?? NSDictionary()
+                print(resposeJSON)
+                if let _ = resposeJSON["status"] {
+                    self.activityIndicator.stopAnimating()
+                    if UserDefaults.standard.value(forKey: "userSubscribed") as! Int == 0 {
+                        UserDefaults.standard.setValue(1, forKey: "userSubscribed")
+                        UserDefaults.standard.synchronize()
+                        let destination = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! TabBarController
+                        self.appD.window?.rootViewController = destination
+                        
+                    } else {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    
+                }
+            }
+        }
     }
 }
